@@ -8,7 +8,7 @@ SELECT @datevar;
 
 GO
 
---INSERT INTO [TR_Demo-DB].[dbo].[P2P_TEST]
+INSERT INTO [TR_Demo-DB].[dbo].[P2P_TEST]
 ---------------------------------------PURCHASE REQUISTION-------------------------------------------------
 ------------------------------------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ SELECT
 ,	CASE WHEN [TR_Demo-DB].[dbo].[RBKP].LIFNR is not NULL THEN [TR_Demo-DB].[dbo].[RBKP].LIFNR ELSE 'Not set' END AS [VendorCode]
 ,	CASE WHEN [TR_Demo-DB].[dbo].[RSEG].MATNR is not NULL THEN [TR_Demo-DB].[dbo].[MAKT].MAKTX ELSE 'Not set' END AS [MaterialName]
 ,	CASE WHEN [TR_Demo-DB].[dbo].[RSEG].SHKZG = 'S' THEN (1.0) WHEN [TR_Demo-DB].[dbo].[RSEG].SHKZG = 'H' THEN (-1.0) END 
-		* CAST([TR_Demo-DB].[dbo].[RSEG].WRBTR AS DECIMAL(10,2)) AS [AMOUNT]--Currency rate ile çarpmamýz gerkeiyor mu?
+		* CAST([TR_Demo-DB].[dbo].[RSEG].WRBTR AS DECIMAL(10,2)) AS [AMOUNT]--Currency rate ile Ã§arpmamÃ½z gerkeiyor mu?
 ,	[TR_Demo-DB].[dbo].[RBKP].VGART AS [Document Category]
 ,	CASE WHEN ([TR_Demo-DB].[dbo].[RSEG].MATNR is not NULL) AND ([TR_Demo-DB].[dbo].[RSEG].MATNR = '') 
 		THEN [TR_Demo-DB].[dbo].[RSEG].MATNR ELSE 'Not set' END AS [MaterialCode]
