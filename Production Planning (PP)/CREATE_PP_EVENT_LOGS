@@ -1,0 +1,38 @@
+CREATE TABLE [ProcessMining].[dbo].[PP_EVENT_LOGY](
+	[OBJECT_NUMBER]				varchar (100)	NOT NULL,
+	[CHANGE_NUMBER]				int				NOT NULL,
+	[PLANNED_ORDER_NUMBER]		varchar(100)	NOT NULL,
+	[ORDER_NUMBER]				varchar (100)	NOT NULL,
+	[ORDER_TYPE]				varchar (100)	NOT NULL,
+	[ORDER_CATEGORY]			varchar (100)	NOT NULL,
+	[STATUS_CODE]				varchar (100)	NOT NULL,
+	[STATUS_SHORT]				varchar(100)	NOT NULL,
+	[STATUS_DESCRIPTION]		varchar (100)	NOT NULL,
+	[IMPORTANT_ACTIVITY]		varchar(100)			,
+	[DATE_TIME]					datetime		,
+	[PLANT]						varchar (100)	NOT NULL,
+	[MATERIAL_NUMBER]			varchar(100)	NOT NULL,
+	[TRANSACTION]				varchar (100)	NOT NULL,
+	[TRANSACTION_DESCRIPTION]	varchar (100)	NOT NULL,
+	--[USER]						varchar(100)	NOT NULL,
+	[ROW_NUMBER]				int				NOT NULL
+);
+CREATE TABLE [ProcessMining].[dbo].[PP_EVENT_LOGZ](
+	[OBJECT_NUMBER]				varchar (100)	NOT NULL,
+	[CHANGE_NUMBER]				int				NOT NULL,
+	[PLANNED_ORDER_NUMBER]		varchar(100)	NOT NULL,
+	[ORDER_NUMBER]				varchar (100)	NOT NULL,
+	[ORDER_TYPE]				varchar (100)	NOT NULL,
+	[ORDER_CATEGORY]			varchar (100)	NOT NULL,
+	[STATUS_CODE]				varchar (100)	NOT NULL,
+	[STATUS_SHORT]				varchar(100)	NOT NULL,
+	[STATUS_DESCRIPTION]		varchar (100)	NOT NULL,
+	[IMPORTANT_ACTIVITY]		varchar(100)			,
+	[DATE_TIME]					datetime		,
+	[PLANT]						varchar (100)	NOT NULL,
+	[MATERIAL_NUMBER]			varchar(100)	NOT NULL,
+	[TRANSACTION]				varchar (100)	NOT NULL,
+	[TRANSACTION_DESCRIPTION]	varchar (100)	NOT NULL,
+	--[USER]						varchar(100)	NOT NULL,
+	[SORTING]					int
+);
