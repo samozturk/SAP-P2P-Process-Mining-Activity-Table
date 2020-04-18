@@ -1,0 +1,79 @@
+--SET DATEFORMAT dmy;  
+--GO  
+DECLARE @datevar datetime2 = '12/31/2008 09:01:01';  
+ 
+
+GO
+	INSERT INTO [ProcessMining].[dbo].[PP_EVENT_LOGY]
+
+SELECT	[ProcessMining].[dbo].[CAUFV].OBJNR AS [OBJECT_NUMBER]
+,		[ProcessMining].[dbo].[JCDS].[CHGNR] AS [CHANGE_NUMBER]
+,		CONVERT(varchar, [ProcessMining].[dbo].[AFPO].[PLNUM]) AS [PLANNED_ORDER_NUMBER]
+,		[ProcessMining].[dbo].[CAUFV].[AUFNR] AS [ORDER_NUMBER]
+,		[ProcessMining].[dbo].[CAUFV].[AUART] AS [ORDER_TYPE]
+,		[ProcessMining].[dbo].[CAUFV].[AUTYP] AS [ORDER_CATEGORY]
+,		[ProcessMining].[dbo].[JCDS].[STAT] AS [STATUS_CODE]	
+,		CASE WHEN LEFT([ProcessMining].[dbo].[JCDS].[STAT],1) = 'E' THEN [ProcessMining].[dbo].[TJ30T].[TXT04] 
+			 WHEN LEFT([ProcessMining].[dbo].[JCDS].[STAT],1) = 'I' THEN [ProcessMining].[dbo].[TJ02T].[TXT04] END AS [STATUS_SHORT]
+,		CASE WHEN LEFT([ProcessMining].[dbo].[JCDS].[STAT],1) = 'E' THEN [ProcessMining].[dbo].[TJ30T].[TXT30] 
+			 WHEN LEFT([ProcessMining].[dbo].[JCDS].[STAT],1) = 'I' THEN [ProcessMining].[dbo].[TJ02T].[TXT30] END AS [STATUS_DESCRIPTION]
+,		CASE WHEN [ProcessMining].[dbo].[JCDS].[STAT] = 'I0012' THEN 'Delivered'
+			 WHEN [ProcessMining].[dbo].[JCDS].[STAT] = 'I0045' THEN 'Technical Complete' END AS [IMPORTANT_ACTIVITY]
+		
+--,		CONVERT(date,[ProcessMining].[dbo].[JCDS].[UDATE]) AS [TARIH] -- can be removed
+--,		CONVERT(time,[ProcessMining].[dbo].[JCDS].[UTIME]) AS [SAAT] -- can be removed
+,		CONVERT(datetime, [ProcessMining].[dbo].[JCDS].[UDATE] + ' ' + [ProcessMining].[dbo].[JCDS].[UTIME]) AS [DATE_TIME]
+,		[ProcessMining].[dbo].[CAUFV].[WERKS] AS [PLANT]
+,		[ProcessMining].[dbo].[CAUFV].PLNBEZ AS [MATERIAL_NUMBER]
+,		[ProcessMining].[dbo].[JCDS].[CDTCODE] AS [TRANSACTION]
+,		[ProcessMining].[dbo].[TSTC].[TTEXT] AS [TRANSACTION_DESCRIPTION]
+
+,		CAST(ROW_NUMBER() OVER(
+		PARTITION BY
+		[ProcessMining].[dbo].[JCDS].[CDTCODE],
+		[ProcessMining].[dbo].[JCDS].[UDATE],
+		[ProcessMining].[dbo].[JCDS].[UTIME],
+		CASE WHEN [ProcessMining].[dbo].[JCDS].[STAT] = 'I0012' THEN 'Delivered'
+			 WHEN [ProcessMining].[dbo].[JCDS].[STAT] = 'I0045' THEN 'Technical Complete' END 
+
+		ORDER BY [ProcessMining].[dbo].[CAUFV].OBJNR) AS INT) AS [ROW_NUMBER]
+--,		[ProcessMining].[dbo].[JCDS].[USNAM] AS [USER]
+--,		CAST([ProcessMining].[dbo].[JCDS].[USNAM] AS nvarchar) AS [USER]
+--,		CONVERT(varchar(100), [ProcessMining].[dbo].[JCDS].[USNAM]) AS [USER]
+
+
+FROM [ProcessMining].[dbo].[CAUFV]
+	INNER JOIN [ProcessMining].[dbo].[JCDS]  ON [ProcessMining].[dbo].[CAUFV].OBJNR		=	[ProcessMining].[dbo].[JCDS].OBJNR
+	LEFT JOIN  [ProcessMining].[dbo].[TJ02T] ON [ProcessMining].[dbo].[JCDS].[STAT]		=	[ProcessMining].[dbo].[TJ02T].[ISTAT]
+	INNER JOIN [ProcessMining].[dbo].[T003O] ON [ProcessMining].[dbo].[CAUFV].[AUART]	=	[ProcessMining].[dbo].[T003O].[AUART]
+	INNER JOIN [ProcessMining].[dbo].[TJ30T] ON [ProcessMining].[dbo].[T003O].[STSMA]	=	[ProcessMining].[dbo].[TJ30T].[STSMA]
+	INNER JOIN [ProcessMining].[dbo].[TSTC]  ON [ProcessMining].[dbo].[JCDS].[CDTCODE]	=	[ProcessMining].[dbo].[TSTC].[TCODE]
+	INNER JOIN [ProcessMining].[dbo].[AFPO]  ON [ProcessMining].[dbo].[CAUFV].[AUFNR]	=	[ProcessMining].[dbo].[AFPO].[AUFNR]
+
+-- If you want to remove inactive records:
+--WHERE 
+--[ProcessMining].[dbo].[JCDS].[INACT] <> 'X' 
+
+ORDER BY [OBJECT_NUMBER], [DATE_TIME];
+-----------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------
+	INSERT INTO [ProcessMining].[dbo].[PP_EVENT_LOGZ]
+SELECT [OBJECT_NUMBER]
+      ,[CHANGE_NUMBER]
+      ,[PLANNED_ORDER_NUMBER]
+      ,[ORDER_NUMBER]
+      ,[ORDER_TYPE]
+      ,[ORDER_CATEGORY]
+      ,[STATUS_CODE]
+      ,[STATUS_SHORT]
+      ,[STATUS_DESCRIPTION]
+      ,[IMPORTANT_ACTIVITY]
+      ,[DATE_TIME]
+      ,[PLANT]
+      ,[MATERIAL_NUMBER]
+      ,[TRANSACTION]
+      ,[TRANSACTION_DESCRIPTION]
+      --,[USER]
+  FROM [ProcessMining].[dbo].[PP_EVENT_LOGY]
+  WHERE [ROW_NUMBER] < 2
+  ORDER BY OBJECT_NUMBER, DATE_TIME;
